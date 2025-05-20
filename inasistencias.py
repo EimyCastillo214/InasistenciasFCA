@@ -15,23 +15,23 @@ df.columns
 # prompt: mostrar tabla de resultados
 
 df
-# prompt: Crear una grafica de pastel la columna Licenciatura de DATOS.csv
 
-# Count the occurrences of each category in the 'Licenciatura' column
-if not df.empty:
-    if 'Licenciatura' in df.columns:
-        counts_licenciatura = df['Licenciatura'].value_counts()
+# prompt: Crear una grafica de pastel la columna Licenciatura de DATOS.csv usando streamlit
 
-        if not counts_licenciatura.empty:
-            # Create the pie chart for Licenciatura
-            plt.figure(figsize=(8, 8)) # Optional: Adjust figure size
-            plt.pie(counts_licenciatura, labels=counts_licenciatura.index, autopct='%1.1f%%', startangle=140)
-            plt.title('Distribución de Licenciatura') # Set the title of the chart
-            plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-            plt.show()
-        else:
-            print("La columna 'Licenciatura' está vacía.")
+# Mostrar la gráfica de pastel para la columna 'Licenciatura' en Streamlit
+if 'df' in locals() and not df.empty and 'Licenciatura' in df.columns and not df['Licenciatura'].empty:
+    st.subheader("Gráfica de Pastel por Licenciatura")
+    counts_licenciatura = df['Licenciatura'].value_counts()
+
+    if not counts_licenciatura.empty:
+        fig_licenciatura, ax_licenciatura = plt.subplots(figsize=(8, 8))
+        ax_licenciatura.pie(counts_licenciatura, labels=counts_licenciatura.index, autopct='%1.1f%%', startangle=140)
+        ax_licenciatura.set_title('Distribución de Licenciatura')
+        ax_licenciatura.axis('equal')
+        st.pyplot(fig_licenciatura)
     else:
-        print("La columna 'Licenciatura' no se encuentra en el DataFrame.")
-else:
-  print("DataFrame is empty. Cannot create a pie chart.")
+        st.warning("La columna 'Licenciatura' no contiene datos para visualizar.")
+elif 'df' in locals() and not df.empty and 'Licenciatura' not in df.columns:
+     st.warning("La columna 'Licenciatura' no se encuentra en el archivo DATOS.csv.")
+elif 'df' in locals() and df.empty:
+     st.warning("El DataFrame está vacío. No se puede crear la gráfica de pastel para Licenciatura.")
