@@ -15,7 +15,6 @@ df.columns
 # prompt: mostrar tabla de resultados
 
 df
-
 # prompt: Crear una grafica de pastel la columna Licenciatura de DATOS.csv usando streamlit
 
 # Mostrar la gráfica de pastel para la columna 'Licenciatura' en Streamlit
