@@ -15,9 +15,16 @@ df.columns
 # prompt: mostrar tabla de resultados
 
 df
-'Edad', 'Licenciatura', 'Promedio', '¿Cuántos dias vas a la escuela?',
-       'Consideras que eres una persona que falta con regularidad',
-       '¿Tus faltas suelen estar justificadas por la escuela?',
-       'Cuantos dias has llegado a faltar por decision propia (sin justificacion o situacion adversa)',
-       'Cual es la razón por la que consideras que faltas',
-       'Hay algun tipo de materia a la que suelas faltar mas'
+# prompt: crea un filtro con las columnas 'Edad', 'Licenciatura', 'Promedio', '¿Cuántos dias vas a la escuela?',
+#        'Consideras que eres una persona que falta con regularidad',
+#        '¿Tus faltas suelen estar justificadas por la escuela?',
+#        'Cuantos dias has llegado a faltar por decision propia (sin justificacion o situacion adversa)',
+#        'Cual es la razón por la que consideras que faltas',
+#        'Hay algun tipo de materia a la que suelas faltar mas'
+
+filtro_columnas = ['Edad', 'Licenciatura', 'Promedio', '¿Cuántos dias vas a la escuela?',
+                    'Consideras que eres una persona que falta con regularidad',
+                    '¿Tus faltas suelen estar justificadas por la escuela?',
+                    'Cuantos dias has llegado a faltar por decision propia (sin justificacion o situacion adversa)',
+                    'Cual es la razón por la que consideras que faltas',
+                    'Hay algun tipo de materia a la que suelas faltar mas']
