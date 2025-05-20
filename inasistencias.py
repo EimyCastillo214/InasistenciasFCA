@@ -15,39 +15,42 @@ df.columns
 # prompt: mostrar tabla de resultados
 
 df
-# prompt: crea un filtro en donde aparezcan los nombres de las columnas y crea una grafica de pastel con los resultados de la columna seleccionada
+# prompt: crea una grafica de pastel usando streamlit
 
-import ipywidgets as widgets
-from IPython.display import display
+import streamlit as st
+import pandas as pd
 import matplotlib.pyplot as plt
 
+st.title('Análisis de Datos')
+st.header('Inasistencias de los estudiantes de FCA')
+
+# Assuming your DATOS.csv is in the same directory as your Streamlit script
+try:
+    df = pd.read_csv('DATOS.csv')
+    st.write("Data loaded successfully:")
+    st.dataframe(df.head())
+except FileNotFoundError:
+    st.error("Error: DATOS.csv not found.")
+    st.stop() # Stop the script if the file is not found
+except Exception as e:
+    st.error(f"An error occurred: {e}")
+    st.stop() # Stop the script if an error occurs
+
 # Dropdown to select a column
-column_selector = widgets.Dropdown(
-    options=df.columns.tolist(),
-    description='Select Column:',
-    disabled=False,
+column_name = st.selectbox(
+    'Selecciona una columna para graficar:',
+    df.columns.tolist()
 )
 
-# Output widget for the plot
-output = widgets.Output()
+# Create the pie chart
+if column_name:
+    st.subheader(f'Distribución de {column_name}')
 
-def display_pie_chart(column_name):
-    with output:
-        output.clear_output(wait=True) # Clear previous plot
-        if column_name in df.columns:
-            # Count the occurrences of each unique value in the selected column
-            column_counts = df[column_name].value_counts()
+    # Count the occurrences of each unique value in the selected column
+    column_counts = df[column_name].value_counts()
 
-            plt.figure(figsize=(8, 8))
-            plt.pie(column_counts, labels=column_counts.index, autopct='%1.1f%%', startangle=140)
-            plt.title(f'Distribution of {column_name}')
-            plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-            plt.show()
-        else:
-            print(f"Column '{column_name}' not found.")
+    fig1, ax1 = plt.subplots()
+    ax1.pie(column_counts, labels=column_counts.index, autopct='%1.1f%%', startangle=140)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
 
-# Link the dropdown value to the display function
-widgets.interactive(display_pie_chart, column_name=column_selector)
-
-# Display the widgets
-display(column_selector, output)
+    st.pyplot(fig1)
