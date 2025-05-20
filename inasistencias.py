@@ -12,3 +12,6 @@ except Exception as e:
 # prompt: mostrar columnas del archivo DATOS.csv
 
 df.columns
+# prompt: mostrar tabla de resultados
+
+df
