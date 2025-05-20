@@ -15,22 +15,65 @@ df.columns
 # prompt: mostrar tabla de resultados
 
 df
-# prompt: Crear una grafica de pastel la columna Licenciatura de DATOS.csv usando streamlit
+# prompt: crear una grafica de pastel con DATOS.csv usando streamlit
 
-# Mostrar la gráfica de pastel para la columna 'Licenciatura' en Streamlit
-if 'df' in locals() and not df.empty and 'Licenciatura' in df.columns and not df['Licenciatura'].empty:
-    st.subheader("Gráfica de Pastel por Licenciatura")
-    counts_licenciatura = df['Licenciatura'].value_counts()
+!pip install streamlit
 
-    if not counts_licenciatura.empty:
-        fig_licenciatura, ax_licenciatura = plt.subplots(figsize=(8, 8))
-        ax_licenciatura.pie(counts_licenciatura, labels=counts_licenciatura.index, autopct='%1.1f%%', startangle=140)
-        ax_licenciatura.set_title('Distribución de Licenciatura')
-        ax_licenciatura.axis('equal')
-        st.pyplot(fig_licenciatura)
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Título de la aplicación Streamlit
+st.title('Análisis de Datos de Inasistencias')
+st.header('Inasistencias de los estudiantes de FCA')
+
+# Cargar los datos
+try:
+    df = pd.read_csv('DATOS.csv')
+    st.write("Datos cargados exitosamente:")
+    st.dataframe(df.head()) # Mostrar las primeras filas del DataFrame
+except FileNotFoundError:
+    st.error("Error: DATOS.csv no encontrado. Por favor, asegúrese de que el archivo está en el directorio correcto.")
+except Exception as e:
+    st.error(f"Ocurrió un error al cargar el archivo: {e}")
+
+# Verificar si el DataFrame no está vacío para proceder
+if 'df' in locals() and not df.empty:
+    st.subheader("Gráfica de Pastel")
+
+    # Permitir al usuario seleccionar la columna para la gráfica de pastel
+    # Asegurarse de que las columnas son de un tipo adecuado para contar valores (generalmente strings o categorías)
+    # Filtramos columnas que podrían no ser adecuadas (ej. IDs únicos, fechas si no se agrupan)
+    categorical_cols = df.select_dtypes(include=['object', 'category']).columns.tolist()
+    # También podemos incluir columnas numéricas si tienen un número limitado de valores únicos (tratarlas como categorías)
+    for col in df.columns:
+        if df[col].dtype in ['int64', 'float64'] and df[col].nunique() < 50: # Umbral ajustable
+             if col not in categorical_cols:
+                 categorical_cols.append(col)
+
+
+    if not categorical_cols:
+        st.warning("No se encontraron columnas categóricas o con un número limitado de valores únicos para crear la gráfica de pastel.")
     else:
-        st.warning("La columna 'Licenciatura' no contiene datos para visualizar.")
-elif 'df' in locals() and not df.empty and 'Licenciatura' not in df.columns:
-     st.warning("La columna 'Licenciatura' no se encuentra en el archivo DATOS.csv.")
-elif 'df' in locals() and df.empty:
-     st.warning("El DataFrame está vacío. No se puede crear la gráfica de pastel para Licenciatura.")
+        column_to_plot = st.selectbox(
+            "Seleccione la columna para la gráfica de pastel:",
+            categorical_cols
+        )
+
+        # Contar las ocurrencias de cada categoría en la columna seleccionada
+        counts = df[column_to_plot].value_counts()
+
+        if counts.empty:
+            st.warning(f"La columna '{column_to_plot}' no contiene datos para visualizar.")
+        else:
+            # Crear la gráfica de pastel usando matplotlib
+            fig, ax = plt.subplots(figsize=(8, 8))
+            ax.pie(counts, labels=counts.index, autopct='%1.1f%%', startangle=140)
+            ax.set_title(f'Distribución de {column_to_plot}')
+            ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+            # Mostrar la gráfica en Streamlit
+            st.pyplot(fig)
+else:
+    if 'df' in locals(): # Si df existe pero está vacío
+         st.warning("El DataFrame está vacío. No se puede crear una gráfica de pastel.")
